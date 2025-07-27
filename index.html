@@ -352,14 +352,14 @@ if (channelId) {
 db.collection("skinOrders").doc(channelId).set(result)
   .then(() => {
     Swal.fire({
-      title: 'ส่งข้อมูลเรียบร้อยแล้ว!',
-      text: 'กำลังกลับไปยัง Discord...',
-      icon: 'success',
-      confirmButtonText: 'ตกลง',
-      timer: 2500,
-      timerProgressBar: true,
-      showConfirmButton: false,
-    });
+  title: "ส่งข้อมูลเรียบร้อยแล้ว!",
+  text: "กำลังนำคุณกลับไปยัง Discord...",
+  icon: "success",
+  background: "rgba(0, 0, 0, 0.8)", // พื้นหลังดำโปร่งใส
+  color: "#b96eff",                // สีข้อความม่วง
+  confirmButtonColor: "#b96eff",  // สีปุ่มยืนยัน (ม่วง)
+});
+
 
     setTimeout(() => {
       // สร้างลิงก์ Discord ไปยังแชนแนลนั้น
