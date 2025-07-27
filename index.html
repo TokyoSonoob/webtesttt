@@ -302,7 +302,7 @@
   <script>
     
 const urlParams = new URLSearchParams(window.location.search);
-const channelId = urlParams.get("channelId"); // ← ได้ channelId จาก Discord
+const channelId = urlParams.get("channelId");
 
 document.getElementById("skinOrderForm").addEventListener("submit", function (e) {
   e.preventDefault();
@@ -317,33 +317,43 @@ document.getElementById("skinOrderForm").addEventListener("submit", function (e)
     result[key] = value;
   });
 
-  // เพิ่ม channelId จาก URL query param เข้าไป
-  const urlParams = new URLSearchParams(window.location.search);
   const channelId = urlParams.get("channelId");
   if (channelId) {
     result.channelId = channelId;
   }
 
   // URL ของ Express server ของคุณ
-  const apiUrl = "https://testtt-pkrx.onrender.com";
+  const apiUrl = "https://testtt-pkrx.onrender.com/skin";
   fetch(apiUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(result),
-  })
-  .then(response => {
-    if (!response.ok) throw new Error("Network response was not ok");
-    return response.json();
-  })
-  .then(data => {
-    alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
-    e.target.reset();
-    submitBtn.disabled = false;
-  })
-  .catch(() => {
-    alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
-    submitBtn.disabled = false;
-  });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(result),
+})
+.then(async response => {
+  const text = await response.text(); // อ่านข้อความตอบกลับดิบก่อน
+  console.log("Response status:", response.status);
+  console.log("Response text:", text);
+  
+  if (!response.ok) throw new Error("Network response was not ok: " + text);
+  
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error("Failed to parse JSON: " + e.message);
+  }
+})
+.then(data => {
+  console.log("Response data:", data);
+  alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
+  e.target.reset();
+  submitBtn.disabled = false;
+})
+.catch(error => {
+  console.error("Error during fetch:", error);
+  alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
+  submitBtn.disabled = false;
+});
+
 });
 
     // แสดงรหัสสี initial และอัปเดตตอนเปลี่ยน
