@@ -3,7 +3,10 @@
 <head>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
   // แก้เป็น config ของโปรเจคคุณจาก Firebase Console
   const firebaseConfig = {
@@ -344,10 +347,26 @@ const channelId = urlParams.get("channelId");
 if (channelId) {
   result.channelId = channelId;
 
-  db.collection("skinOrders").doc(channelId).set(result)
-    .then(() => {
-      alert("ส่งข้อมูลสำเร็จแล้ว!");
-    })
+  const serverId = "1336555551970164839"; // ID เซิร์ฟเวอร์ของคุณ
+
+db.collection("skinOrders").doc(channelId).set(result)
+  .then(() => {
+    Swal.fire({
+      title: 'ส่งข้อมูลเรียบร้อยแล้ว!',
+      text: 'กำลังกลับไปยัง Discord...',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      timer: 2500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
+
+    setTimeout(() => {
+      // สร้างลิงก์ Discord ไปยังแชนแนลนั้น
+      const discordUrl = `https://discord.com/channels/${serverId}/${channelId}`;
+      window.location.href = discordUrl;
+    }, 2500);
+  })
     .catch((error) => {
       alert("เกิดข้อผิดพลาด: " + error.message);
     });
