@@ -325,8 +325,7 @@ document.getElementById("skinOrderForm").addEventListener("submit", function (e)
   }
 
   // URL ของ Express server ของคุณ
-  const apiUrl = "https://testtt-pkrx.onrender.com";
-
+  const apiUrl = "https://testtt-pkrx.onrender.com/skin";
   fetch(apiUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -375,57 +374,6 @@ colorInputs.forEach(input => {
     });
   }
 });
-
-
-    // ตัวอย่างส่งฟอร์ม (แก้ webhook ตามต้องการ)
-    document.getElementById("skinOrderForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      const submitBtn = document.querySelector("button");
-      submitBtn.disabled = true;
-
-      const formData = new FormData(e.target);
-      const result = {};
-
-      formData.forEach((value, key) => {
-        result[key] = value;
-      });
-
-      // เปลี่ยนเป็น webhook จริงของคุณ
-      const webhookUrl = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN";
-
-      fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: "**📥 ฟอร์มสั่งสกินใหม่เข้ามาแล้ว!**",
-          embeds: [
-            {
-              title: "รายละเอียดการสั่งสกิน",
-              color: 0xa24dfd,
-              fields: Object.entries(result).map(([key, value]) => ({
-                name: key,
-                value: value || "-",
-                inline: false
-              })),
-              footer: {
-                text: "Sea muww 乂",
-              },
-              timestamp: new Date().toISOString()
-            }
-          ]
-        })
-      })
-      .then(() => {
-        alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
-        e.target.reset();
-        submitBtn.disabled = false;
-      })
-      .catch(() => {
-        alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
-        submitBtn.disabled = false;
-      });
-    });
   </script>
 </body>
 </html>
