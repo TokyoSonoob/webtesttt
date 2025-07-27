@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+  // แก้เป็น config ของโปรเจคคุณจาก Firebase Console
+  const firebaseConfig = {
+  apiKey: "AIzaSyDVEQJoNBp58O4q2qP5FuXTSZbFmgzBlvY",
+  authDomain: "aaaa-2e429.firebaseapp.com",
+  projectId: "aaaa-2e429",
+  storageBucket: "aaaa-2e429.firebasestorage.app",
+  messagingSenderId: "394123306379",
+  appId: "1:394123306379:web:7dba20ba934cc2befbbb8e",
+  measurementId: "G-GYCFHRE2DJ"
+};
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ฟอร์มสั่งสกิน</title>
@@ -317,45 +337,28 @@ document.getElementById("skinOrderForm").addEventListener("submit", function (e)
     result[key] = value;
   });
 
+  // ดึง channelId จาก URL query string (ถ้ามี)
+  const urlParams = new URLSearchParams(window.location.search);
   const channelId = urlParams.get("channelId");
   if (channelId) {
     result.channelId = channelId;
   }
 
-  // URL ของ Express server ของคุณ
-  const apiUrl = "https://testtt-pkrx.onrender.com/skin";
-  fetch(apiUrl, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(result),
-})
-.then(async response => {
-  const text = await response.text(); // อ่านข้อความตอบกลับดิบก่อน
-  console.log("Response status:", response.status);
-  console.log("Response text:", text);
-  
-  if (!response.ok) throw new Error("Network response was not ok: " + text);
-  
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    throw new Error("Failed to parse JSON: " + e.message);
-  }
-})
-.then(data => {
-  console.log("Response data:", data);
-  alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
-  e.target.reset();
-  submitBtn.disabled = false;
-})
-.catch(error => {
-  console.error("Error during fetch:", error);
-  alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
-  submitBtn.disabled = false;
-});
+  // เพิ่ม timestamp
+  result.createdAt = firebase.firestore.FieldValue.serverTimestamp();
 
+  db.collection("skinOrders").add(result)
+    .then(() => {
+      alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
+      e.target.reset();
+      submitBtn.disabled = false;
+    })
+    .catch(error => {
+      console.error("Error adding document: ", error);
+      alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
+      submitBtn.disabled = false;
+    });
 });
-
     // แสดงรหัสสี initial และอัปเดตตอนเปลี่ยน
     const colorInputs = document.querySelectorAll('input[type="color"]');
 colorInputs.forEach(input => {
