@@ -301,6 +301,23 @@
 
   <script>
     
+const urlParams = new URLSearchParams(window.location.search);
+const channelId = urlParams.get("channelId"); // ← ได้ channelId จาก Discord
+
+// ตอนกดส่งแบบฟอร์ม (fetch หรือ webhook)
+const formData = {
+  channelId: channelId,
+  hairColor: document.querySelector("#hairColor").value,
+  eyeColor: document.querySelector("#eyeColor").value,
+  // ...อื่น ๆ
+};
+
+fetch("https://your-api-server.com/skin", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(formData),
+});
+
 
     // แสดงรหัสสี initial และอัปเดตตอนเปลี่ยน
     const colorInputs = document.querySelectorAll('input[type="color"]');
