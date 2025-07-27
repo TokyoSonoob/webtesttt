@@ -304,20 +304,48 @@
 const urlParams = new URLSearchParams(window.location.search);
 const channelId = urlParams.get("channelId"); // ← ได้ channelId จาก Discord
 
-// ตอนกดส่งแบบฟอร์ม (fetch หรือ webhook)
-const formData = {
-  channelId: channelId,
-  hairColor: document.querySelector("#hairColor").value,
-  eyeColor: document.querySelector("#eyeColor").value,
-  // ...อื่น ๆ
-};
+document.getElementById("skinOrderForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-fetch("https://your-api-server.com/skin", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData),
+  const submitBtn = document.querySelector("button");
+  submitBtn.disabled = true;
+
+  const formData = new FormData(e.target);
+  const result = {};
+
+  formData.forEach((value, key) => {
+    result[key] = value;
+  });
+
+  // เพิ่ม channelId จาก URL query param เข้าไป
+  const urlParams = new URLSearchParams(window.location.search);
+  const channelId = urlParams.get("channelId");
+  if (channelId) {
+    result.channelId = channelId;
+  }
+
+  // URL ของ Express server ของคุณ
+  const apiUrl = "http://localhost:3000/skin"; // เปลี่ยนเป็น URL จริงของคุณ
+
+  fetch(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(result),
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Network response was not ok");
+    return response.json();
+  })
+  .then(data => {
+    alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
+    e.target.reset();
+    submitBtn.disabled = false;
+  })
+  .catch(() => {
+    alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
+    submitBtn.disabled = false;
+  });
 });
-
 
     // แสดงรหัสสี initial และอัปเดตตอนเปลี่ยน
     const colorInputs = document.querySelectorAll('input[type="color"]');
