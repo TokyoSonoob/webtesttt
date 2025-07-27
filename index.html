@@ -339,25 +339,21 @@ document.getElementById("skinOrderForm").addEventListener("submit", function (e)
 
   // ดึง channelId จาก URL query string (ถ้ามี)
   const urlParams = new URLSearchParams(window.location.search);
-  const channelId = urlParams.get("channelId");
-  if (channelId) {
-    result.channelId = channelId;
-  }
+const channelId = urlParams.get("channelId");
 
-  // เพิ่ม timestamp
-  result.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+if (channelId) {
+  result.channelId = channelId;
 
-  db.collection("skinOrders").add(result)
+  db.collection("skinOrders").doc(channelId).set(result)
     .then(() => {
-      alert("📦 ส่งข้อมูลเรียบร้อยแล้ว!");
-      e.target.reset();
-      submitBtn.disabled = false;
+      alert("ส่งข้อมูลสำเร็จแล้ว!");
     })
-    .catch(error => {
-      console.error("Error adding document: ", error);
-      alert("❌ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่");
-      submitBtn.disabled = false;
+    .catch((error) => {
+      alert("เกิดข้อผิดพลาด: " + error.message);
     });
+} else {
+  alert("ไม่พบ channelId ใน URL");
+}
 });
     // แสดงรหัสสี initial และอัปเดตตอนเปลี่ยน
     const colorInputs = document.querySelectorAll('input[type="color"]');
